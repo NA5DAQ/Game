@@ -76,7 +76,7 @@ glm::dvec2 GAME::BASE::GetCursorPosition(void)
 }
 
 
-void GAME::BASE::Add(boost::shared_ptr<GAME::GUI::SimpleText> Obj)
+void GAME::BASE::Add(boost::shared_ptr<Aux::OpenGL> Obj)
 {
 	boost::unique_lock<boost::mutex>(Sync);
 	SimpleTexts.insert( SimpleTexts.end(), Obj);
