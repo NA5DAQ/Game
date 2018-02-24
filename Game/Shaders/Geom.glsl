@@ -16,7 +16,7 @@ uniform double CountSymvols; //Count of syvols in texture
 uniform int Depth;//Depth symvol \n
 uniform int NewLine;// curent VABenum pos
 double Ratio=17. / 7.;
-double GetOffset()
+double GetOffset() 
 {
 	return  trunc((TextureSize.x/CountSymvols)*(ASCII[0]-32))/TextureSize.x;
 };

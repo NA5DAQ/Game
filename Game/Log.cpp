@@ -6,7 +6,7 @@ std::string  LogManager::Log::GenUnderline(void)
 	std::stringstream ss;
 	ss.imbue(std::locale(ss.getloc(), s));
 	ss << boost::posix_time::second_clock::local_time();
-	return "[" + ss.str() + "] :";
+	return "[" + ss.str() + "] :"; 
 }
 
 std::string LogManager::Log::GetTime(void)

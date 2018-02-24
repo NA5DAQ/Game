@@ -99,4 +99,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Frag.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Geom.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Vert.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+  </ItemGroup>
 </Project>

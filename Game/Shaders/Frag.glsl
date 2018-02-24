@@ -1,4 +1,4 @@
-// shadertype=glsl
+// shadertype=glsl 
 //Pixel shader
 #version 400 
 in highp vec2 UV;
