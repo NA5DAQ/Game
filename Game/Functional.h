@@ -40,7 +40,7 @@ namespace GAME
 			//обезательно для синхонизации с графическим движком
 			boost::mutex Sync;
 		public:
-			virtual void Draw(void) {};
+			virtual void Draw(void) = 0;
 		};
 		namespace BASE
 		{

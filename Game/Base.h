@@ -12,13 +12,13 @@ namespace GAME
 			GLFWwindow* ShareContext = 0;
 			boost::atomic<bool> Run;
 			Aux::BASE::Param  Settings;
-			std::vector<share<GAME::Aux::OpenGL>>SimpleTexts;
+			std::vector<share<Aux::OpenGL>>SimpleTexts;
 			boost::mutex Sync;
 			void XRenderLoop(void);
 			boost::thread*ThreadRender;
 		public:
 			glm::dvec2 GetCursorPosition(void);
-			void Add(boost::shared_ptr<GAME::Aux::OpenGL> a);
+			void Add(boost::shared_ptr<Aux::OpenGL> Obj);
 			BASE();
 			void SetFPSLimit(unsigned int );
 			void Vsync(bool);
