@@ -20,7 +20,7 @@ void GAME::BASE::XRenderLoop(void)
 		Stump = boost::chrono::high_resolution_clock::now();
 		Sync.lock();
 		{
-			share<GAME::GUI::SimpleText> Primitive;
+			share<GAME::Aux::OpenGL> Primitive;
 			glDisable(GL_DEPTH_TEST);
 			for (int i=0; i<SimpleTexts.size(); i++)
 			{
@@ -76,7 +76,7 @@ glm::dvec2 GAME::BASE::GetCursorPosition(void)
 }
 
 
-void GAME::BASE::Add(boost::shared_ptr<Aux::OpenGL> Obj)
+void GAME::BASE::Add(boost::shared_ptr<GAME::Aux::OpenGL> Obj)
 {
 	boost::unique_lock<boost::mutex>(Sync);
 	SimpleTexts.insert( SimpleTexts.end(), Obj);
