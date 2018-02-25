@@ -20,7 +20,7 @@ void GAME::BASE::XRenderLoop(void)
 		Stump = boost::chrono::high_resolution_clock::now();
 		Sync.lock();
 		{
-			share<GAME::GUI::SimpleText> Primitive;
+			share<GAME::Aux::OpenGL> Primitive;
 			glDisable(GL_DEPTH_TEST);
 			for (int i=0; i<SimpleTexts.size(); i++)
 			{
