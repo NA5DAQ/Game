@@ -12,7 +12,7 @@ namespace GAME
 			GLFWwindow* ShareContext = 0;
 			boost::atomic<bool> Run;
 			Aux::BASE::Param  Settings;
-			std::vector<share<Aux::OpenGL>>SimpleTexts;
+			std::vector<share<Aux::OpenGL>>Obj;
 			boost::mutex Sync;
 			void XRenderLoop(void);
 			boost::thread*ThreadRender;

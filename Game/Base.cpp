@@ -22,9 +22,9 @@ void GAME::BASE::XRenderLoop(void)
 		{
 			share<GAME::Aux::OpenGL> Primitive;
 			glDisable(GL_DEPTH_TEST);
-			for (int i=0; i<SimpleTexts.size(); i++)
+			for (int i=0; i<Obj.size(); i++)
 			{
-				Primitive = SimpleTexts[i];
+				Primitive = Obj[i];
 				Sync.unlock();
 				Primitive->Draw();
 				Sync.lock();
@@ -76,10 +76,10 @@ glm::dvec2 GAME::BASE::GetCursorPosition(void)
 }
 
 
-void GAME::BASE::Add(boost::shared_ptr<Aux::OpenGL> Obj)
+void GAME::BASE::Add(boost::shared_ptr<Aux::OpenGL> newObj)
 {
 	boost::unique_lock<boost::mutex>(Sync);
-	SimpleTexts.insert( SimpleTexts.end(), Obj);
+	Obj.insert(Obj.end(), newObj);
 }
 
 GAME::BASE::BASE()
