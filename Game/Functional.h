@@ -26,7 +26,8 @@
 #include<Luax64\lua.hpp>
 #include"Shaders.h"
 #include<boost/atomic.hpp>
-
+#include<unordered_map>
+#include<unordered_set>
 template<class what_share> using share = boost::shared_ptr<what_share>;
 enum Align { UP_LEFT=0x777, MIDDLE_LEFT, DOWN_LEFT, UP_MIDDLE, MIDDLE_MIDDLE, DOWN_MIDDLE, UP_RIGHT, MIDDLE_RIGHT, DOWN_RIGHT };
 
@@ -40,7 +41,15 @@ namespace GAME
 			//обезательно для синхонизации с графическим движком
 			boost::mutex Sync;
 		public:
-			virtual void Draw(void) = 0;
+			virtual void Draw(void) {};
+		};
+		class HASH
+		{
+		public:
+			size_t operator()(boost::shared_ptr<OpenGL>GL)const
+			{
+				return (size_t)GL.get();
+			};
 		};
 		namespace BASE
 		{
