@@ -3,6 +3,8 @@
 
 void GAME::BASE::XRenderLoop(void)
 {
+	std::unordered_map< size_t, boost::shared_ptr<Aux::OpenGL>> IDRenderList;
+	std::unordered_set<boost::shared_ptr<Aux::OpenGL>, Aux::HASH>RenderList;
 	auto Stump=boost::chrono::high_resolution_clock::now();
 	unsigned long long FrameRate = 0;
 	glfwMakeContextCurrent(this->Context);
@@ -14,24 +16,27 @@ void GAME::BASE::XRenderLoop(void)
 		auto modo=glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glViewport(0, 0,modo->width, modo->height);
 	}
+	auto it = IDRenderList.end();
+	auto it2 = RenderList.end();
 	while (Run)
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		Stump = boost::chrono::high_resolution_clock::now();
-		Sync.lock();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		if (Sync.try_lock()&&OnChange)//if lock
 		{
-			share<GAME::Aux::OpenGL> Primitive;
-			glDisable(GL_DEPTH_TEST);
-			for (int i=0; i<Obj.size(); i++)
-			{
-				Primitive = Obj[i];
-				Sync.unlock();
-				Primitive->Draw();
-				Sync.lock();
-			}
-			glEnable(GL_DEPTH_TEST);
+			OnChange = false;
+			IDRenderList = IDObjs;
+			RenderList = Objs;
 		}
 		Sync.unlock();
+		for (auto it = IDRenderList.begin(); it != IDRenderList.end(); it++)
+		{
+			it->second->Draw();
+		}
+		for (auto it = RenderList.begin(); it != RenderList.end(); it++)
+		{
+			it->get()->Draw();
+		}
 		//Frame in Nano
 		FrameRate = boost::chrono::duration_cast<boost::chrono::nanoseconds>(boost::chrono::high_resolution_clock::now() - Stump).count();
 		//Vsync
@@ -77,13 +82,49 @@ glm::dvec2 GAME::BASE::GetCursorPosition(void)
 
 
 void GAME::BASE::Add(boost::shared_ptr<Aux::OpenGL> newObj)
+{ 
+	Sync.lock();
+	OnChange = true;
+	Objs.insert(Objs.end(), newObj);
+	Sync.unlock();
+}
+
+void GAME::BASE::Add(size_t ID, boost::shared_ptr<Aux::OpenGL> Obj)
 {
-	boost::unique_lock<boost::mutex>(Sync);
-	Obj.insert(Obj.end(), newObj);
+	Sync.lock();
+	OnChange = true;
+	auto it=IDObjs.find(ID);
+	if (it == IDObjs.end())
+	{
+		IDObjs.insert(std::pair< size_t, boost::shared_ptr<Aux::OpenGL>>(ID, Obj));
+	}
+	else
+	{
+		IDObjs.erase(it);
+		IDObjs.insert(std::pair<size_t, boost::shared_ptr<Aux::OpenGL>>(ID, Obj));
+	};
+	Sync.unlock();
+}
+
+void GAME::BASE::Remove(size_t ID)
+{
+	Sync.lock();
+	OnChange = true;
+	IDObjs.erase(ID);
+	Sync.unlock();
+}
+
+void GAME::BASE::Remove(void)
+{
+	Sync.lock();
+	OnChange = true;
+	Objs.clear();
+	Sync.unlock();
 }
 
 GAME::BASE::BASE()
 {
+	OnChange = false;
 	if (!glfwInit())
 	{
 		throw(1337);
