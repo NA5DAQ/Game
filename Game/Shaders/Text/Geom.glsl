@@ -34,6 +34,7 @@ dvec2 Screen2UV(dvec2 Coord)
 };
 mat3 Transform(dvec2 Offset)
 {
+	//vec3 is column, does not row;  
 	return mat3(vec3(1.0,0.0,0.0), vec3(0.0,1.0,0.0), vec3(Offset.x,Offset.y,1.0));
 }
 vec2 CalcPosition(void)
