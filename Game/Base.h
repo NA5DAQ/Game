@@ -13,6 +13,7 @@ namespace GAME
 			Aux::BASE::Camera Camera;
 			boost::atomic<bool> Run;
 			boost::atomic<bool>OnChange;
+			void OnWindowReshape(GLFWwindow*, int, int);
 			Aux::BASE::Param  Settings;
 			//faster, but it does not suppose id interface
 			std::unordered_set<boost::shared_ptr<Aux::OpenGL>, Aux::HASH>Objs;

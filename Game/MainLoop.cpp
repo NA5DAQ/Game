@@ -12,9 +12,11 @@ int main()
 	Renderer.SetFPSLimit(60);
 	LuaManager::Lua Lua;
 	share<GAME::OPENGL::Pipeline>GLSL(new GAME::OPENGL::Pipeline(share<GAME::OPENGL::Shader>(new 
-		GAME::OPENGL::Shader(L"Shaders/Vert.glsl", 0, 0, L"Shaders/Geom.glsl", L"Shaders/Frag.glsl"))));
+		GAME::OPENGL::Shader(L"Shaders/Text/Vert.glsl", 0, 0, L"Shaders/Text/Geom.glsl", L"Shaders/Text/Frag.glsl"))));
 	share<GAME::Texture>Tex(new GAME::Texture(L"SimpleText.png", GAME::Texture::NEAR));
-	share<GAME::GUI::SimpleText>Text(new GAME::GUI::SimpleText(Tex, GLSL)); 
+	share<GAME::GUI::SimpleText>Text(new GAME::GUI::SimpleText(Tex, GLSL));
+	share<GAME::OPENGL::Pipeline>GLSL2(new GAME::OPENGL::Pipeline(share<GAME::OPENGL::Shader>(new
+		GAME::OPENGL::Shader(L"Shaders/Panel/Vert.glsl", 0, 0, L"Shaders/Panel/Geom.glsl", L"Shaders/Panel/Frag.glsl"))));
 	Text->SetText("X X X");
 	Text->SetColor(0, 255, 0);
 	Text->SetScale(40);

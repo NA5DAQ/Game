@@ -1,6 +1,13 @@
 #include "Base.h"
 #include<boost\chrono.hpp>
 
+void GAME::BASE::OnWindowReshape(GLFWwindow *, int NewWidth, int NewHeight)
+{
+	Sync.lock();
+	Camera.Projection = glm::ortho(-NewWidth / 2, NewWidth/2, -NewHeight/2, NewHeight/2);
+	Sync.unlock();
+}
+
 void GAME::BASE::XRenderLoop(void)
 {
 	std::unordered_map< size_t, boost::shared_ptr<Aux::OpenGL>> IDRenderList;
@@ -170,6 +177,9 @@ unsigned int GAME::BASE::GetFPS(void)
 void GAME::BASE::CreateWindow(unsigned int Width, unsigned int Height, unsigned int PosX, unsigned int PosY)
 {
 	Context = glfwCreateWindow(Width, Height, "", 0, 0);
+	Sync.lock();
+	Camera.Projection = glm::ortho(-Width / 2, Width / 2, -Height / 2, Height / 2);
+	Sync.unlock();
 	glfwWindowHint(GLFW_VISIBLE, false);
 	ShareContext = glfwCreateWindow(1, 1, "", 0, Context);
 	glfwMakeContextCurrent(ShareContext);

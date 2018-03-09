@@ -52,8 +52,6 @@ void GAME::GUI::SimpleText::Draw(GAME::Aux::BASE::Camera&Camera)
 	glUniform2d(glGetUniformLocation(GLSL->GetProgramm(), "TextureSize"), TextureSize.x, TextureSize.y);
 	glUniform1d(glGetUniformLocation(GLSL->GetProgramm(), "CountSymvols"), CountSymvols);
 	Sync.unlock();
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VAB);
 	glVertexAttribIPointer(0, 1, GL_BYTE, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, VABenum);
@@ -86,7 +84,6 @@ void GAME::GUI::SimpleText::Draw(GAME::Aux::BASE::Camera&Camera)
 			}
 		};
 	};
-	glDeleteVertexArrays(1, &VAO);
 }
 
 GAME::GUI::SimpleText::SimpleText(
@@ -111,6 +108,7 @@ GAME::GUI::SimpleText::SimpleText(
 		Offsets[ii] = ii;
 	};
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 0x4000 * sizeof(GLint), Offsets.get());
+	
 	TextureSize.x = Texture->GetInfo().Width;
 	TextureSize.y = Texture->GetInfo().Height;
     GlyphShotSize.x = 7;
