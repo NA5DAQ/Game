@@ -18,6 +18,7 @@ void GAME::BASE::XRenderLoop(void)
 	}
 	auto it = IDRenderList.end();
 	auto it2 = RenderList.end();
+	auto LocalCamera = Camera;
 	while (Run)
 	{
 		Stump = boost::chrono::high_resolution_clock::now();
@@ -28,14 +29,15 @@ void GAME::BASE::XRenderLoop(void)
 			IDRenderList = IDObjs;
 			RenderList = Objs;
 		}
-		Sync.unlock();
+		LocalCamera = Camera;
+		Sync.unlock();	
 		for (auto it = IDRenderList.begin(); it != IDRenderList.end(); it++)
 		{
-			it->second->Draw();
+			it->second->Draw(LocalCamera);
 		}
 		for (auto it = RenderList.begin(); it != RenderList.end(); it++)
 		{
-			it->get()->Draw();
+			it->get()->Draw(LocalCamera);
 		}
 		//Frame in Nano
 		FrameRate = boost::chrono::duration_cast<boost::chrono::nanoseconds>(boost::chrono::high_resolution_clock::now() - Stump).count();

@@ -1,36 +1,5 @@
 #include "Text.h"
 
-void CheckError(void)
-{
-	switch (glGetError())
-	{
-	case GL_NO_ERROR:
-		std::cout << "GL_NO_ERROR" << "\n";
-		break;
-	case GL_INVALID_ENUM:
-		std::cout << "GL_INVALID_ENUM" << "\n";
-		break;
-	case GL_INVALID_VALUE:
-		std::cout << "GL_INVALID_VALUE" << "\n";
-		break;
-	case GL_INVALID_OPERATION:
-		std::cout << "GL_INVALID_OPERATION" << "\n";
-		break;
-	case GL_INVALID_FRAMEBUFFER_OPERATION:
-		std::cout << "GL_INVALID_FRAMEBUFFER_OPERATION" << "\n";
-		break;
-	case GL_OUT_OF_MEMORY:
-		std::cout << "GL_OUT_OF_MEMORY" << "\n";
-		break;
-	case GL_STACK_UNDERFLOW:
-		std::cout << "GL_STACK_UNDERFLOW" << "\n";
-		break;
-	case GL_STACK_OVERFLOW:
-		std::cout << "GL_OUT_OF_MEMORY" << "\n";
-		break;
-
-	}
-}
 GAME::GUI::SimpleText::~SimpleText()
 {
 	glDeleteVertexArrays(1, &VAO);
@@ -38,7 +7,7 @@ GAME::GUI::SimpleText::~SimpleText()
 	glDeleteBuffers(1, &VABenum);
 }
 
-void GAME::GUI::SimpleText::Draw(void)
+void GAME::GUI::SimpleText::Draw(GAME::Aux::BASE::Camera&Camera)
 {
 	GLSL->Use();
 	glUniform1i(glGetUniformLocation(GLSL->GetProgramm(), "NewLine"), 0);

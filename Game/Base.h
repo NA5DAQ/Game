@@ -10,6 +10,7 @@ namespace GAME
 		private:
 			GLFWwindow* Context=0;
 			GLFWwindow* ShareContext = 0;
+			Aux::BASE::Camera Camera;
 			boost::atomic<bool> Run;
 			boost::atomic<bool>OnChange;
 			Aux::BASE::Param  Settings;

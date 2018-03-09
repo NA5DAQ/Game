@@ -27,7 +27,7 @@ namespace GAME
 			unsigned int VABenum;
 		public:
 			~SimpleText();
-			void Draw(void);
+			void Draw(Aux::BASE::Camera&) override;
 			SimpleText( 
 				share<GAME::Texture> , 
 				share<GAME::OPENGL::Pipeline>);
