@@ -24,14 +24,15 @@ mat4 Quat2Rot(vec4 Q)
 	Rot[0][3] = 0.0;Rot[1][3] = 0.0;Rot[2][3] = 0.0;Rot[3][3] = 1.0;
 	return Rot;
 }
-mat4 Transform(dvec2 Offset)
+
+mat4 Transform(vec3 Offset)
 {
 	//vec3 is column, does not row;  
 	return mat4(
 	vec4(1.0,0.0,0.0,0.0), 
 	vec4(0.0,1.0,0.0,0.0), 
 	vec4(0.0,0.0,1.0,0.0),
-	vec4(Offset.x, Offset.y,0.0,1.0));
+	vec4(Offset.x, Offset.y,Offset.z,1.0));
 }
 layout(shared , column_major ) uniform CameraBlock
 {
@@ -40,6 +41,17 @@ layout(shared , column_major ) uniform CameraBlock
 	mat4 Pos;
 }Camera;
 
+uniform int Frame;
+uniform int MaxFrame;
+
+double GetOffset() 
+{
+	return  (1./MaxFrame)*Frame;
+};
+double GetStep()
+{
+	return 1./MaxFrame;
+};
 layout(points) in;
 
 in vec2 Size[];
@@ -48,30 +60,29 @@ in vec3 Position[];
 
 layout(triangle_strip , max_vertices=4) out;
 out vec2 UV;
-
 void main(void)
 {
 	mat4 CamRot=Quat2Rot(Camera.Quaternion);
 	vec2 Half=Size[0].xy/2.; 
-	UV=vec2(0.0,1.0);
+	UV=vec2(GetOffset(),1.0);
 	gl_Position=
-	Camera.Proj*Camera.Pos*
-	CamRot*Transform(Position[0].xy)*Rotations[0]*vec4(-Half.x,-Half.y,0.,1.);
+	Camera.Proj*CamRot*
+	Camera.Pos*Transform(Position[0])*Rotations[0]*vec4(-Half.x,-Half.y,0.,1.);
 	EmitVertex();
-	UV=vec2(0.0,0.0);
+	UV=vec2(GetOffset(),0.0);
 	gl_Position=
-	Camera.Proj*Camera.Pos*
-	CamRot*Transform(Position[0].xy)*Rotations[0]*vec4(-Half.x,Half.y,0.,1.);
+	Camera.Proj*CamRot*
+	Camera.Pos*Transform(Position[0])*Rotations[0]*vec4(-Half.x,Half.y,0.,1.);
 	EmitVertex();
-	UV=vec2(1.0,1.0);
+	UV=vec2(GetOffset()+GetStep(), 1.0);
 	gl_Position=
-	Camera.Proj*Camera.Pos*
-	CamRot*Transform(Position[0].xy)*Rotations[0]*vec4(Half.x,-Half.y,0.,1.);
+	Camera.Proj*CamRot*
+	Camera.Pos*Transform(Position[0])*Rotations[0]*vec4(Half.x,-Half.y,0.,1.);
 	EmitVertex();
-	UV=vec2(1.0,0.0);
+	UV=vec2(GetOffset()+GetStep(), 0.0);;
 	gl_Position=
-	Camera.Proj*Camera.Pos*
-	CamRot*Transform(Position[0].xy)*Rotations[0]*vec4(Half.x,Half.y,0.,1.);
+	Camera.Proj*CamRot*
+	Camera.Pos*Transform(Position[0])*Rotations[0]*vec4(Half.x,Half.y,0.,1.);
 	EmitVertex();
 	EndPrimitive();
 }; 
