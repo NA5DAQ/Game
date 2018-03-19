@@ -7,9 +7,10 @@ GAME::GUI::SimpleText::~SimpleText()
 	glDeleteBuffers(1, &VABenum);
 }
 
-void GAME::GUI::SimpleText::Draw(GAME::Aux::BASE::Camera&Camera)
+void GAME::GUI::SimpleText::Draw(GAME::Aux::BASE::Camera&Camera, unsigned int UBO)
 {
 	GLSL->Use();
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	glUniform1i(glGetUniformLocation(GLSL->GetProgramm(), "NewLine"), 0);
 	Sync.lock();
 	glUniform3f(glGetUniformLocation(GLSL->GetProgramm(), "Color"), Color.r,Color.g,Color.b);
@@ -59,8 +60,8 @@ void GAME::GUI::SimpleText::Draw(GAME::Aux::BASE::Camera&Camera)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	unsigned long long First = 0;
+	this->Texture->Use(GLSL->GetProgramm());
 	glBindBuffer(GL_ARRAY_BUFFER, VABenum);
-	glBindTexture(GL_TEXTURE_2D, Texture->GetTextureID());
 	glBindBuffer(GL_ARRAY_BUFFER, VAB);
 	Sync.lock();
 	glBufferSubData(GL_ARRAY_BUFFER, 0, Text.length() * sizeof(GLbyte), Text.c_str());
@@ -69,6 +70,7 @@ void GAME::GUI::SimpleText::Draw(GAME::Aux::BASE::Camera&Camera)
 		Sync.unlock();
 		int First = 0;
 		int Depth = 0;
+		glDisable(GL_DEPTH_TEST);
 		for (int i = 0; i < TextCopy.length(); i++)
 		{
 			if (TextCopy[i] == 10||i== TextCopy.length()-1)//"\n"
@@ -84,10 +86,12 @@ void GAME::GUI::SimpleText::Draw(GAME::Aux::BASE::Camera&Camera)
 			}
 		};
 	};
+	glEnable(GL_DEPTH_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 }
 
 GAME::GUI::SimpleText::SimpleText(
-	share<GAME::Texture> Tex, 
+	share<Aux::TextureObject> Tex,
 	share<GAME::OPENGL::Pipeline>Pipe)
 {
 	Ratio = (double)17.0 / (double)7.0;
@@ -164,20 +168,20 @@ void GAME::GUI::SimpleText::SetScale(size_t Size)
 	Sync.unlock();
 }
 
-void GAME::GUI::SimpleText::SetPos(unsigned int X, unsigned int Y)
+void GAME::GUI::SimpleText::SetPos(glm::vec2 XY)
 {
 	Sync.lock();
 
-	this->Pos.x= X;
-	this->Pos.y = Y;
+	this->Pos.x= XY.x;
+	this->Pos.y = XY.y;
 	Sync.unlock();
 }
 
-void GAME::GUI::SimpleText::SetColor(unsigned char R, unsigned char G, unsigned char B)
+void GAME::GUI::SimpleText::SetColor(glm::vec3 RGB)
 {
 	Sync.lock();
-	Color.x = (float)R / 255.;
-	Color.y = (float)G / 255.;
-	Color.z = (float)B / 255.;
+	Color.x = RGB.r / 255.;
+	Color.y = RGB.g / 255.;
+	Color.z = RGB.b / 255.;
 	Sync.unlock();
 }

@@ -6,10 +6,10 @@ namespace GAME
 {
 	namespace GUI
 	{
-		class SimpleText:public Aux::OpenGL
+		class SimpleText:public Aux::GameObject
 		{
 		private:
-			share<GAME::Texture>Texture;
+			share<Aux::TextureObject>Texture;
 			share<GAME::OPENGL::Pipeline>GLSL;
 			Align CurentAlign;
 			double Ratio;
@@ -27,16 +27,16 @@ namespace GAME
 			unsigned int VABenum;
 		public:
 			~SimpleText();
-			void Draw(Aux::BASE::Camera&) override;
+			void Draw(Aux::BASE::Camera&, unsigned int UBO) override;
 			SimpleText( 
-				share<GAME::Texture> , 
+				share<Aux::TextureObject> ,
 				share<GAME::OPENGL::Pipeline>);
-			void SetText(std::string);
+			void SetText(std::string) override;
 			SimpleText() = delete;
-			void SetAlign(Align Type);
-			void SetScale(size_t Size);
-			void SetPos(unsigned int X,unsigned int Y);
-			void SetColor(unsigned char R, unsigned char G, unsigned char B);
+			void SetAlign(Align Type)override;
+			void SetScale(size_t Size)override;
+			void SetPos(glm::vec2 XY)override;
+			void SetColor(glm::vec3 RGB)override;
 		};
 	};
 }
