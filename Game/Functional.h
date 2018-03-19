@@ -28,59 +28,19 @@
 #include<boost/atomic.hpp>
 #include<unordered_map>
 #include<unordered_set>
+#include"Debug.h"
 template<class what_share> using share = boost::shared_ptr<what_share>;
 enum Align { UP_LEFT=0x777, MIDDLE_LEFT, DOWN_LEFT, UP_MIDDLE, MIDDLE_MIDDLE, DOWN_MIDDLE, UP_RIGHT, MIDDLE_RIGHT, DOWN_RIGHT };
-//debug
-//void CheckError(void)
-//{
-//	switch (glGetError())
-//	{
-//	case GL_NO_ERROR:
-//		std::cout << "GL_NO_ERROR" << "\n";
-//		break;
-//	case GL_INVALID_ENUM:
-//		std::cout << "GL_INVALID_ENUM" << "\n";
-//		break;
-//	case GL_INVALID_VALUE:
-//		std::cout << "GL_INVALID_VALUE" << "\n";
-//		break;
-//	case GL_INVALID_OPERATION:
-//		std::cout << "GL_INVALID_OPERATION" << "\n";
-//		break;
-//	case GL_INVALID_FRAMEBUFFER_OPERATION:
-//		std::cout << "GL_INVALID_FRAMEBUFFER_OPERATION" << "\n";
-//		break;
-//	case GL_OUT_OF_MEMORY:
-//		std::cout << "GL_OUT_OF_MEMORY" << "\n";
-//		break;
-//	case GL_STACK_UNDERFLOW:
-//		std::cout << "GL_STACK_UNDERFLOW" << "\n";
-//		break;
-//	case GL_STACK_OVERFLOW:
-//		std::cout << "GL_OUT_OF_MEMORY" << "\n";
-//		break;
-//
-//	}
-//}
 namespace GAME
 {
 	namespace Aux
 	{
-		class OpenGL;
-		class HASH
-		{
-		public:
-			size_t operator()(boost::shared_ptr<OpenGL>GL)const
-			{
-				return (size_t)GL.get();
-			};
-		};
 		namespace BASE
 		{
 			struct Camera
 			{
-				glm::quat Quaternion;
 				glm::mat4x4 Projection;
+				glm::quat Quaternion;
 				glm::mat4x4 Pos;
 			};
 			struct Param
@@ -102,13 +62,6 @@ namespace GAME
 		}
 		namespace Texture
 		{
-			struct Animation
-			{
-				size_t OffsetX = 0;
-				size_t OffsetY = 0;
-				size_t ms = 0;
-				size_t Frames = 0;
-			};
 			struct Info
 			{
 				size_t Width = 0;
@@ -116,13 +69,47 @@ namespace GAME
 				size_t DataLength = 0;
 				size_t Format = 0;
 			};
+			struct Animation
+			{
+				int Frame;
+				int MaxFrame;
+			};
 		}
 		class OpenGL
 		{
 		protected:
 			boost::mutex Sync;
 		public:
-			virtual void Draw(BASE::Camera&) {};
+			virtual void Draw(BASE::Camera&, unsigned int UBO) {};
 		};
-	}
+		class HASH
+		{
+		public:
+			size_t operator()(boost::shared_ptr<OpenGL>GL)const
+			{
+				return (size_t)GL.get();
+			};
+		};
+		class GameObject :public OpenGL
+		{
+		public:
+			virtual void SetAngle(glm::vec3 EulerAngles) { throw; };
+			virtual void SetPos(glm::vec3 Position) { throw; };
+			virtual void SetPos(glm::vec2 Position) { throw; };
+			virtual void SetScale(glm::vec2 Scale) { throw; };
+			virtual void SetScale(size_t Scale) { throw; };
+			virtual void SetAlign(Align Type) { throw; };
+			virtual void SetColor(glm::vec4 RGBA) { throw; };
+			virtual void SetColor(glm::vec3 RGB) { throw; };
+			virtual void SetText(std::string Text) { throw; };
+		};
+		class TextureObject
+		{
+		protected:
+			virtual unsigned int TextureID(void) { throw;return 0; };
+		public:
+			static unsigned long long AnimTime;
+			virtual void Use(unsigned int GLSLID) { throw; };
+			virtual Texture::Info GetInfo(void) { throw; };
+		};	}
 }
