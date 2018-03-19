@@ -1,6 +1,6 @@
 #include "Texture.h"
 #include<iostream>
-
+unsigned long long GAME::Aux::TextureObject::AnimTime = 0;
 GAME::Texture::Texture(const wchar_t * File, Filter FiltrationType)
 {
 	boost::scoped_array<unsigned char>ColorData;
@@ -36,12 +36,41 @@ GAME::Texture::~Texture()
 {
 	glDeleteTextures(1, &GLTexture);
 };
-GAME::Aux::Texture::Info  GAME::Texture::GetInfo()
+GAME::Aux::Texture::Info  GAME::Texture::GetInfo(void)
 {
 	return  Aux::Texture::Info(Info);
 }
 
-unsigned int GAME::Texture::GetTextureID()
+void GAME::Texture::Use(unsigned int GLSLID)
+{
+	glBindTexture(GL_TEXTURE_2D, TextureID());
+	glUniform1i(glGetUniformLocation(GLSLID, "MaxFrame"), 1);
+	glUniform1i(glGetUniformLocation(GLSLID, "Frame"), 0);
+};
+unsigned int GAME::Texture::TextureID(void)
 {
 	return this->GLTexture;
+};
+unsigned int GAME::AnimatedTexture::TextureID(void)
+{
+	return this->Tex->TextureID();
+};
+void GAME::AnimatedTexture::Use(unsigned int GLSLID)
+{
+	Frame = round((MaxFrames-1)*((float)(AnimTime%ms)/(float)ms));
+	glUniform1i(glGetUniformLocation(GLSLID, "MaxFrame"), MaxFrames);
+	glUniform1i(glGetUniformLocation(GLSLID, "Frame"), Frame);
+	glBindTexture(GL_TEXTURE_2D, TextureID());
+	
+};
+GAME::AnimatedTexture::AnimatedTexture(boost::shared_ptr<Texture>Tex, int Frames, int TimeMs, bool isInfinity)
+{
+	this->Tex = Tex;
+	this->MaxFrames = Frames;
+	this->ms = TimeMs;
+	this->Infinity = Infinity;
+};
+GAME::AnimatedTexture::~AnimatedTexture()
+{
+
 };
