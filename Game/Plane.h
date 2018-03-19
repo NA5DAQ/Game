@@ -4,10 +4,10 @@
 #include"Shaders.h"
 namespace GAME
 {
-		class Plane :public Aux::OpenGL
+		class Plane :public Aux::GameObject
 		{
 		private:
-			boost::shared_ptr<Texture>Tex;
+			boost::shared_ptr<Aux::TextureObject>Tex;
 			boost::shared_ptr<OPENGL::Pipeline>GLSL;
 			glm::vec3 Position;
 			glm::vec2 Size;
@@ -15,11 +15,11 @@ namespace GAME
 			unsigned int VBO;
 		public:
 			~Plane();
-			Plane(boost::shared_ptr<Texture>Tex,
+			Plane(boost::shared_ptr<Aux::TextureObject>Tex,
 				boost::shared_ptr<OPENGL::Pipeline>GLSL);
-			void Draw(Aux::BASE::Camera&) override;
-			void SetPos(glm::vec3);
-			void SetSize(glm::vec2);
-			void SetAngle(glm::vec3);//in euler format
+			void Draw(Aux::BASE::Camera&, unsigned int UBO) override;
+			void SetPos(glm::vec3)override;
+			void SetScale(glm::vec2)override;
+			void SetAngle(glm::vec3)override;//in euler format
 		};
 }
