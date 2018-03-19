@@ -14,8 +14,9 @@ namespace GAME
 			~Pipeline();
 			Pipeline() = delete;
 			Pipeline(boost::shared_ptr<GAME::OPENGL::Shader>);
+			Pipeline(boost::shared_ptr<GAME::OPENGL::Shader>,const char*TFBVaryngs[],  int Count);
 			const char* GetLog(void);
-			const int GetProgramm(void);
+			unsigned int GetProgramm(void);
 			void Use(void);
 		};
 		class Shader

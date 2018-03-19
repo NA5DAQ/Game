@@ -60,18 +60,83 @@ GAME::OPENGL::Pipeline::Pipeline(boost::shared_ptr<GAME::OPENGL::Shader> Shaders
 		glGetProgramiv(GLSLID, GL_INFO_LOG_LENGTH, &Param);
 		InfoShader.reset(new char[Param + 2]);
 		InfoShader[Param + 1] = NULL;
+		throw(0);
 		glGetProgramInfoLog(GLSLID, Param, NULL, InfoShader.get());
 		Log = std::string("\nERROR LINK\n") + std::string(InfoShader.get());
 	}
 	
-};
+}
+GAME::OPENGL::Pipeline::Pipeline(boost::shared_ptr<GAME::OPENGL::Shader>Shaders, const char * TFBVaryngs[], int Count)
+{
+	GLSLID = glCreateProgram();
+	int Param = 0;
+	boost::scoped_array<char>InfoShader;
+	for (char i = 0; i < 5; i++)
+	{
+		if ((*Shaders.get())[i] != 0)
+		{
+			glGetShaderiv((*Shaders.get())[i], GL_COMPILE_STATUS, &Param);
+			if (Param)
+			{
+				glAttachShader(GLSLID, (*Shaders.get())[i]);
+			}
+			else
+			{
+				glGetShaderiv((*Shaders.get())[i], GL_INFO_LOG_LENGTH, &Param);
+				InfoShader.reset(new char[Param + 2]);
+
+				InfoShader[Param + 1] = NULL;
+				glGetShaderInfoLog((*Shaders.get())[i], Param, NULL, InfoShader.get());
+				//Log = std::string + std::string(InfoShader.get());
+				glGetShaderiv((*Shaders.get())[i], GL_SHADER_TYPE, &Param);
+				switch (Param)
+				{
+				case GL_VERTEX_SHADER:
+					Log = std::string("\nERROR GL_VERTEX_SHADER\n") + std::string(InfoShader.get());
+					break;
+				case GL_TESS_CONTROL_SHADER:
+					Log = std::string("\nERROR GL_TESS_CONTROL_SHADER\n") + std::string(InfoShader.get());
+					break;
+				case GL_TESS_EVALUATION_SHADER:
+					Log = std::string("\nERROR GL_TESS_EVALUATION_SHADER\n") + std::string(InfoShader.get());
+					break;
+				case GL_GEOMETRY_SHADER:
+					Log = std::string("\nERROR GL_GEOMETRY_SHADER\n") + std::string(InfoShader.get());
+					break;
+				case GL_FRAGMENT_SHADER:
+					Log = std::string("\nERROR GL_FRAGMENT_SHADER\n") + std::string(InfoShader.get());
+					break;
+				default:
+					throw("wrong");
+					break;
+				}
+			}
+		}
+	};
+	glTransformFeedbackVaryings(GLSLID, Count, TFBVaryngs, GL_INTERLEAVED_ATTRIBS);
+	glLinkProgram(GLSLID);
+	glGetProgramiv(GLSLID, GL_LINK_STATUS, &Param);
+	if (Param)
+	{
+	}
+	else
+	{
+		glGetProgramiv(GLSLID, GL_INFO_LOG_LENGTH, &Param);
+		InfoShader.reset(new char[Param + 2]);
+		InfoShader[Param + 1] = NULL;
+		throw(0);
+		glGetProgramInfoLog(GLSLID, Param, NULL, InfoShader.get());
+		Log = std::string("\nERROR LINK\n") + std::string(InfoShader.get());
+	}
+}
+;
 
 const char * GAME::OPENGL::Pipeline::GetLog(void)
 {
 	return Log.c_str();
 }
 
-const int GAME::OPENGL::Pipeline::GetProgramm(void)
+unsigned int GAME::OPENGL::Pipeline::GetProgramm(void)
 {
 	return GLSLID;
 }
